@@ -9,55 +9,27 @@ import sys
 import subprocess
 import time
 import squeue as sq
+import jobConfigMenu as jcreate
+from python.tables.tables import create_job_table, update_job_values, create_local_table, update_local_table_values
+from python.windows.windows import dblue_logo
+from update import FolderWatcher
 
-list = sq.get_queue()
-result = subprocess.run(
-    ["bash", "shell/check_job_status.sh", "check"],
-    capture_output=True,
-    text=True,
-    check=True
-)
-
-print(result.stdout)
-
+status, result = sq.get_queue()
 dpg.create_context()
 dpg.create_viewport(title="DelftBlue", width=1500, height=800)
 dpg.setup_dearpygui()
 width, height, channels, data = dpg.load_image("backends/img.png")
 
+from styles import *
+from python.windows import *
+from python.tables import *
+
+def get_jobfiles():
+    subfolder_path = "job_data"
+    return [f for f in os.listdir(subfolder_path) if os.path.isfile(os.path.join(subfolder_path, f))]
 
 
-with dpg.theme() as teal_button_theme:
-    with dpg.theme_component(dpg.mvButton):
-        dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 150, 150, 255])        # button background
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 50, 50, 255])
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 100, 100, 255])  # active/pressed
-        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])
-
-with dpg.theme() as red_button_theme:
-    with dpg.theme_component(dpg.mvButton):
-        dpg.add_theme_color(dpg.mvThemeCol_Button, [200, 0, 0, 255])       # button background
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 50, 50, 255])
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [150, 0, 0, 255])
-        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])      # text color
-
-with dpg.theme() as green_button_theme:
-    with dpg.theme_component(dpg.mvButton):
-        dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 180, 100, 255])         # normal
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 50, 50, 255])
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 130, 80, 255])    # active
-        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])
-
-with dpg.theme() as delftblue_theme:
-    with dpg.theme_component(dpg.mvButton):
-        # Using RGBA approximation from the uploaded image
-        dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 180, 255, 255])        # normal
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [50, 210, 255, 255]) # hover
-        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 150, 220, 255])   # active
-        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])         # text
-
-
-def cancel_handle(source, app_data, user_data):
+def submit_handle(source, app_data, user_data):
     print(f"cancelling {user_data}")
     dpg.configure_item(source, label="TERMINATED")
     dpg.bind_item_theme(source, theme=red_button_theme)
@@ -65,44 +37,17 @@ def cancel_handle(source, app_data, user_data):
         ["bash", "shell/cancel.sh", "terminate", user_data]
     )
 
+
 def console_open_handle(source, app_data, user_data):
-    subprocess.Popen(["konsole",  "-e", "/home/dominykas/PycharmProjects/PythonProject/DBinterface/shell/connect.sh"])
+    subprocess.Popen(["konsole",  "-e", "/home/dominykas/PycharmProjects/PythonProject/DBinterface/shell/connect.sh", "A"])
 
+def job_creator_open_handle(source, app_data, user_data):
+    jcreate.create_window()
 
-with dpg.texture_registry():
-    texture_id = dpg.add_static_texture(width, height, data)
+dblue_logo()
 
-
-with dpg.font_registry():
-    title_font = dpg.add_font("backends/Freedom-10eM.ttf", 34)
-
-
-with dpg.window(label="", no_title_bar=True, no_resize=True, no_move=True,
-            no_scrollbar=True, width=width, height=height, pos=(100, 100)):
-    dpg.add_image(texture_id, pos=(-1, -1))
-    #dpg.bind_font(title_font)
-
-with dpg.window(label="T", no_title_bar=True, no_resize=True, no_move=True,
-            no_scrollbar=True, width=width, height=100, pos=(100, height + 100), no_background=True):
-    title = dpg.add_text("Delft Blue", tag="custom_text")
-    dpg.bind_item_font(title, title_font)
-
-with dpg.window(label="A", no_title_bar=True, no_resize=True, no_move=True,
-            no_scrollbar=True, width=800, height=height, pos=(500, 100)):
-    main_table = dpg.add_table(tag="main_table", header_row=True,
-                               policy=dpg.mvTable_SizingFixedFit,
-                               row_background=True,
-                               reorderable=True,
-                               resizable=True,
-                               no_host_extendX=False,
-                               hideable=True,
-                               borders_innerV=True,
-                               delay_search=True,
-                               borders_outerV=True,
-                               borders_innerH=True,
-                               borders_outerH=True)
-
-
+main_table = create_job_table()
+second_table = create_local_table()
 
 with dpg.window(label="Console", no_title_bar=True, no_resize=True, no_move=True,
             no_scrollbar=True, width=160, height=80, pos=(100, 500)):
@@ -122,56 +67,84 @@ with dpg.window(label="Console", no_title_bar=True, no_resize=True, no_move=True
         pos=(-1, 29)
     )
     dpg.bind_item_theme(cbtn2, theme=red_button_theme)
+    cbtn3 = dpg.add_button(
+        label="New Job",
+        width=160,
+        height=30,
+        callback=job_creator_open_handle,
+        pos=(-1, 59)
+    )
+    dpg.bind_item_theme(cbtn2, theme=red_button_theme)
+
+with dpg.window(label="SyncTime", no_title_bar=True, no_resize=True, no_move=True,
+            no_scrollbar=True, width=160, height=80, pos=(100, 500)):
+    cbtn = dpg.add_button(
+        label="Open Remote Console",
+        width=160,
+        height=30,
+        callback=console_open_handle,
+        pos=(-1, -1)
+    )
+    dpg.bind_item_theme(cbtn, theme=delftblue_theme)
+    cbtn2 = dpg.add_button(
+        label="Open Local Console",
+        width=160,
+        height=30,
+        callback=console_open_handle,
+        pos=(-1, 29)
+    )
+    dpg.bind_item_theme(cbtn2, theme=red_button_theme)
+    cbtn3 = dpg.add_button(
+        label="New Job",
+        width=160,
+        height=30,
+        callback=job_creator_open_handle,
+        pos=(-1, 59)
+    )
+    dpg.bind_item_theme(cbtn2, theme=red_button_theme)
 
 
-def update_table_values():
-    dpg.delete_item(main_table, children_only=True)
-    for i in range(len(list[0]) + 1):
-        if i == 0:
-            dpg.add_table_column(label="Status", width_fixed=True, parent=main_table)
-        dpg.add_table_column(label=list[0][i - 1], width_fixed=True, parent=main_table)
+def send_directory(self, path):
+    subprocess.run(["bash", "shell/sync.sh", "send"])
 
-    for i in range(0, len(list)):
-        with dpg.table_row(parent=main_table):
-            for j in range(0, len(list[i]) + 1):
-                status = "AWAIT"
-                theme = teal_button_theme
-                try:
-                    exec_time = list[i][5]
-                    state = list[i][4]
-                    if state == "CG":
-                        status = "TERMINATED"
-                        theme = red_button_theme
-                    elif state == "PD":
-                        theme = teal_button_theme
-                    else:
-                        datetime.datetime.strptime(exec_time, "%M:%S")
-                        theme = green_button_theme
-                        status = "RUNNING"
+def receive_directory(self, path):
+    subprocess.run(["bash", "shell/sync.sh", "retrieve"])
 
-                except ValueError:
-                    theme = teal_button_theme
+with dpg.window(label="FloatAdjuster", no_title_bar=True, no_resize=True, no_move=True,
+                no_scrollbar=True, width=300, height=200, pos=(300, 500)):
+    # Float value display
+    timer0 = dpg.add_text(f"Last fetch : {1}", tag="float_display", pos=(0, 0))
 
-                if j == 0:
-                    cbtn = dpg.add_button(
-                        label=status,
-                        width=80,
-                        height=30,
-                        callback=cancel_handle,
-                        user_data=f"{list[i][j]}",
-                    )
-                    dpg.bind_item_theme(cbtn, theme=theme)
-                else:
-                    dpg.add_text(f"{list[i][j - 1]}", tag=f"{j + i * len(list[i])}")
+    # Increase button
+    up_btn = dpg.add_button(label="->", width=40, height=30, pos=(0, 40),
+                            callback=send_directory, user_data=0)
+
+    # Decrease button
+    down_btn = dpg.add_button(label="<-", width=40, height=30, pos=(0, 80),
+                              callback=receive_directory, user_data=0)
+
 # main loop
 dpg.show_viewport()
 elapsed = time.time()
+downlink = sq.AsyncQueue(func=None, args=("bash", "shell/check_job_status.sh", "check"))
+downlink.start()
+folder = os.getcwd()
+def my_sync(self, path):
+    print(f"Syncing folder: {path}")
+    print(f"{self.sync_start_time}")
+    subprocess.run(["bash", "shell/sync.sh", "send"])
+
+watcher = FolderWatcher(folder, my_sync)
+#watcher.start()
 
 while dpg.is_dearpygui_running():
     dpg.render_dearpygui_frame()
-    if int(elapsed) % 5 == 0:
-        list = sq.get_queue()
-        update_table_values()
+    list = downlink.fetch()
+    if list is not None:
+        update_job_values(main_table, list)
+        #time_downlink = time.time() - watcher.event_handler.sync_start_time
+        #dpg.set_value(timer0, f"Last fetched {int(time_downlink)} s ago")
+
 
     elapsed = time.time()
 
