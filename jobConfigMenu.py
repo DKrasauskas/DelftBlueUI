@@ -1,23 +1,34 @@
 from dearpygui.dearpygui import *
 import os
+import shutil
+
+
+
+create_context()
+
 class batchjob:
     def __init__(self, job):
         self.job = job
 
-    def _generate_jobfile(self):
+    def generate_jobfile(self):
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
-        mode = mode = 0o644
-        file = os.open(f"job_data/{self.NAME}", flags, mode)
+        mode = 0o644
+        os.mkdir(f"remote/{self.NAME}")
+        file = os.open(f"remote/{self.NAME}/request.sh", flags, mode)
         buffer = (
+          f"#!/bin/bash\n"
           f"#SBATCH --job-name=\"{self.NAME}\" \n"
-          f"#SBATCH --partition={self.TYPE}\n"
+          f"#SBATCH --partition=gpu\n"
           f"#SBATCH --cpus-per-task={self.NUM_OF_CPUS} \n"
           f"#SBATCH --gpus-per-task={self.NUM_OF_GPUS}\n"
+          f"#SBATCH --time=00:{1}:00\n"
           f"#SBATCH --ntasks=1\n"
-          f"#SBATCH --mem=100G\n"
+          f"#SBATCH --mem-per-cpu=1G\n\n"
+          f"srun job.sh"
         )
         os.write(file, buffer.encode('utf8'))
         os.close(file)
+        shutil.copy2("templates/generic_job/job.sh", f"remote/{self.NAME}")
 
 
 
@@ -28,7 +39,7 @@ def _handle_job_creation(source, app_data, user_data):
     job.NAME = get_value(f"{user_data}_job_name")
     print(job.NAME)
     job.TYPE = f"{user_data}"
-    job._generate_jobfile()
+    job.generate_jobfile()
     hide_item(user_data)
 
 def slider_callback(sender, app_data):
@@ -38,9 +49,13 @@ def slider_callback(sender, app_data):
 def knob_callback(sender, app_data):
     set_value("message", f"{sender} set to {app_data:.2f}")
 
+# def get_jobfiles():
+#     subfolder_path = "remote"
+#     return os.listdir(subfolder_path)
 
-create_context()
 def dropdown_callback(sender, app_data):
+    #jobfiles = get_jobfiles()
+    #update_local_table_values(user_data, jobfiles)
     """Open a new window based on dropdown selection"""
     if app_data == "CPU":
         window_tag = "cpu"

@@ -2,9 +2,10 @@
 
 
 check(){
-  ssh  dkrasauskas@login.delftblue.tudelft.nl  "squeue --me"
+  local user="$1"
+  ssh  "$user"@login.delftblue.tudelft.nl  "squeue --me"
 }
 
 if [[ "$1" == "check" ]]; then
-    check
+    check "$2"
 fi

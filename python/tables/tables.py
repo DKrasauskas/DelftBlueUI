@@ -5,6 +5,7 @@ import dearpygui.dearpygui as dpg
 from styles import *
 import time
 import squeue as sq
+from user import *
 """
 Job Table (fetched from the remote device) :
 """
@@ -12,7 +13,7 @@ def cancel_handle(source, app_data, user_data):
     print(f"cancelling {user_data}")
     dpg.configure_item(source, label="TERMINATED")
     dpg.bind_item_theme(source, theme=red_button_theme)
-    uplink = sq.AsyncQueue(func=None, args=("bash", "shell/cancel.sh", "terminate", user_data))
+    uplink = sq.AsyncQueue(func=None, args=("bash", "shell/cancel.sh", "terminate", user_data, USER))
     uplink.start()
 
 
@@ -37,7 +38,6 @@ def create_job_table():
     return main_table
 
 def update_job_values(main_table, list):
-    print("fetched")
     dpg.delete_item(main_table, children_only=True)
     dpg.add_table_column(label="Status", init_width_or_weight=80, parent=main_table)
     dpg.add_table_column(label=list[0][0], init_width_or_weight=50, parent=main_table)
@@ -84,8 +84,17 @@ def update_job_values(main_table, list):
 """
 Job Table (from local job files) :
 """
+
+def local_table_callback(source, appdata, user_data):
+    path = user_data
+    dpg.bind_item_theme(source, theme=downlink_theme)
+    dpg.configure_item(source, label="SUBMITTED")
+    subprocess.run(
+        ["bash", "shell/run_job.sh", "run", f"remote/{user_data}", USER]
+    )
+
 def create_local_table():
-    height = 400
+    height = 200
     with dpg.window(label="B", no_title_bar=True, no_resize=True, no_move=True,
                     no_scrollbar=True, width=800, height=height, pos=(500, 400)):
         second_table = dpg.add_table(
@@ -113,8 +122,10 @@ def update_local_table_values(second_table, list):
         with dpg.table_row(parent=second_table):
             dpg.add_text(list[i])
             cbtn3 = dpg.add_button(
-                label="status",
+                label="READY",
                 width=80,
                 height=30,
-                callback=None,
+                callback=local_table_callback,
+                user_data=f"{list[i]}"
             )
+            dpg.bind_item_theme(cbtn3, theme=uplink_theme)

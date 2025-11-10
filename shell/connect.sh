@@ -1,8 +1,9 @@
 #!/bin/bash
 connect(){
-  ssh  dkrasauskas@login.delftblue.tudelft.nl
+  local user="$1"
+  ssh  "$user"@login.delftblue.tudelft.nl
 }
 
 if [[ "$1" == "A" ]]; then
-    connect
+    connect "$2"
 fi

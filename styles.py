@@ -29,3 +29,21 @@ with dpg.theme() as delftblue_theme:
         dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [50, 210, 255, 255]) # hover
         dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 150, 220, 255])   # active
         dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])         # text
+
+# --- Uplink Theme (yellow-green tone) ---
+with dpg.theme() as uplink_theme:
+    with dpg.theme_component(dpg.mvButton):
+        # More natural, less neon
+        dpg.add_theme_color(dpg.mvThemeCol_Button, [60, 170, 80, 255])         # normal (medium green)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [80, 200, 100, 255]) # hover (fresh green)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [45, 130, 65, 255])   # active (dark forest green)
+        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])
+
+
+# --- Downlink Theme (dark blue tone) ---
+with dpg.theme() as downlink_theme:
+    with dpg.theme_component(dpg.mvButton):
+        dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 70, 180, 255])          # normal (deep blue)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [0, 100, 230, 255])  # hover (bright blue)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 50, 130, 255])    # active (very dark blue)
+        dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])

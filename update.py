@@ -26,7 +26,6 @@ class ChangeHandler(FileSystemEventHandler):
         return self.sync_start_time
 
     def sync(self):
-        print("Running sync in a separate thread")
         self.sync_start_time = time.time()
         self.sync_function(self, self.folder)
         self.schedule_sync()

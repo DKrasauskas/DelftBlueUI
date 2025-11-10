@@ -4,11 +4,12 @@ import threading
 import dearpygui as dpg
 import time
 import queue
+from user import *
 
 def get_queue():
 
         result = subprocess.run(
-            ["bash", "shell/check_job_status.sh", "check"],
+            ["bash", "shell/check_job_status.sh", "check", USER],
             capture_output=True,
             text=True,
             check=True
