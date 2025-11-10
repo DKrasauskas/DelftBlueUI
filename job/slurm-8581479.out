@@ -1,0 +1,45 @@
+
+--------------------------- /apps/noarch/modulefiles ---------------------------
+   2023r1    2023r1-gcc11    2023r1-intel    2024r1    2025
+
+-------------------------- /apps/generic/modulefiles ---------------------------
+   abaqus/2022             feko/2022.2.1             (D)
+   abaqus/2024      (D)    gurobi/10.0.3
+   ams/2023.103            gurobi/11.0.1             (D)
+   ams/2025.102     (D)    gurobi/12.0.0
+   ansys/2023R2     (D)    intel/oneapi_2022.3       (D)
+   ansys/2024R1            intel/oneapi_2024.0
+   ansys/2024R2            intel/oneapi-all
+   compiler                intel/oneapi
+   compose/2023            intel/psxe_2020
+   compose/2023.1   (D)    julia/1.11.6
+   comsol/5.6              ls-dyna/13.0.1
+   comsol/6.1              mathematica/13.0.0
+   comsol/6.2       (D)    matlab/R2021b
+   cuda/11.6        (D)    matlab/R2024a
+   cuda/11.7               matlab/R2024b-ParServ
+   cuda/12.1               matlab/R2024b             (D)
+   cuda/12.5               mechanical-solvers/2022.2 (D)
+   cuda/12.9               mechanical-solvers/2023
+   desktop/vnc             miniconda3/4.12.0
+   diana/10.6              nvhpc/22.3
+   diana/10.9              nvhpc/23.5
+   diana/10.10      (D)    nvhpc/25.7                (D)
+   edem/2022.2      (D)    paraview/5.9.1
+   edem/2023               slurm/current             (L)
+   edem/2024.1             smokeview/6.9.1
+   edem/2025               tecplot/2023r1
+   fds/6.9.1               vasp/5.4.4-pl2            (D)
+   febio/studio-2.6        vasp/6.4.2-foss
+   febio/2.6        (D)    yambo/5.2.3
+   feko/2022
+
+  Where:
+   D:  Default Module
+   L:  Module is loaded
+
+Use "module spider" to find all possible modules and extensions.
+Use "module keyword key1 key2 ..." to search for all possible modules matching
+any of the "keys".
+
+
