@@ -18,3 +18,4 @@ Once the ssh key is generated, the usage is very simple. In user.py specify your
 
 Then run main.py. Create jobs, then modify them to your needs (cmake, makefile, config etc)  Note that the interactive console for this patch is only supported for Arch based linux versions. Windows Powershell is not yet implemented. 
 
+# *this is still work in progress and not all features may work properly*
