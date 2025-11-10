@@ -1,1 +1,3 @@
-<img width="1282" height="622" alt="image" src="https://github.com/user-attachments/assets/594d3b0a-6c7d-412b-8189-b49dee926ad2" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b289ba16-01bc-4fa9-87b6-ddf8ad427aa9" width="342" height="345" alt="DelftBLUE GUI Logo">
+</p>
