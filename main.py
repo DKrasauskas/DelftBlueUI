@@ -1,12 +1,11 @@
 import os
 import subprocess
 import time
-import squeue as sq
-import jobConfigMenu as jcreate
+from python.utils import squeue as sq
 import python.windows.windows as win
-from update import FolderWatcher
+from python.asyncCP.update import FolderWatcher
 from python.tables.tables import create_job_table, update_job_values, create_local_table, update_local_table_values
-from styles import *
+from python.utils.styles import *
 from user import *
 
 def get_jobfiles():
@@ -37,7 +36,7 @@ cbtn, cbtn1, cbtn2 = win.console_window(second_table)
 
 #create uplink/downlink table
 timer0, uplinkB, downlinkB, autosyncB = win.fetch_window()
-#async downlink / uplink for job squeue fetching from remote
+#asyncCP downlink / uplink for job squeue fetching from remote
 downlink = sq.AsyncQueue(func=None, args=("bash", "shell/check_job_status.sh", "check", USER), interval=2)
 downlink.start()
 

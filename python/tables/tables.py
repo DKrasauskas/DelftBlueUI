@@ -1,10 +1,8 @@
 import datetime
 import subprocess
 
-import dearpygui.dearpygui as dpg
-from styles import *
-import time
-import squeue as sq
+from python.utils.styles import *
+from python.utils import squeue as sq
 from user import *
 """
 Job Table (fetched from the remote device) :

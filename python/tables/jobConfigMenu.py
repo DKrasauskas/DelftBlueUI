@@ -28,7 +28,7 @@ class batchjob:
         )
         os.write(file, buffer.encode('utf8'))
         os.close(file)
-        shutil.copy2("templates/generic_job/job.sh", f"remote/{self.NAME}")
+        shutil.copy2("../../templates/generic_job/job.sh", f"remote/{self.NAME}")
 
 
 

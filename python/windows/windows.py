@@ -1,8 +1,7 @@
-import dearpygui.dearpygui as dpg
 import time
 import subprocess
-from styles import*
-import jobConfigMenu as jcreate
+from python.utils.styles import*
+from python.tables import jobConfigMenu as jcreate
 from user import *
 
 FETCH_TIME = time.time()

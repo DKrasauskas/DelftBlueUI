@@ -42,13 +42,13 @@ def  update_progress(pbar):
     dpg.configure_item(pbar, overlay=f"{progress}")
     dpg.set_frame_callback(dpg.get_frame_count() + 3, callback=lambda: update_progress(pbar))
 
-width, height, channels, data = dpg.load_image("backends/img.png")
+width, height, channels, data = dpg.load_image("../../backends/img.png")
 with dpg.texture_registry():
     texture_id = dpg.add_static_texture(width, height, data)
 
 
 with dpg.font_registry():
-    title_font = dpg.add_font("backends/Freedom-10eM.ttf", 34)
+    title_font = dpg.add_font("../../backends/Freedom-10eM.ttf", 34)
 
 
 with dpg.window(label="", no_title_bar=True, no_resize=True, no_move=True,

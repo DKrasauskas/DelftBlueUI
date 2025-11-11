@@ -1,6 +1,6 @@
-
 import dearpygui.dearpygui as dpg
 
+dpg.create_context()
 with dpg.theme() as teal_button_theme:
     with dpg.theme_component(dpg.mvButton):
         dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 150, 150, 255])        # button background
