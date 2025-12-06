@@ -20,7 +20,7 @@ Then run main.py. Alternatively, you can create a desktop application (with a ne
 
     chmod +x install.sh
     ./install.sh
-Then running the executable should provide you with a menu screen (Do note outside TUDelft you will need a VPN to access DelftBlue. ):
+Then running the executable should provide you with a menu screen (outside TUDelft you will need a VPN to access DelftBlue).
 <p align="center">
  <img width="1497" height="828" alt="image" src="https://github.com/user-attachments/assets/1779695b-afa4-4a34-8bff-987f24760b52" />
 </p>
