@@ -1,9 +1,14 @@
 import datetime
+import os
 import subprocess
 
+from python.tables.jobConfigMenu import batchjob
 from python.utils.styles import *
 from python.utils import squeue as sq
+from python.tables.JobCreator import *
 from user import *
+
+from zoneinfo import ZoneInfo
 """
 Job Table (fetched from the remote device) :
 """
@@ -35,7 +40,7 @@ def create_job_table():
         )
     return main_table
 
-def update_job_values(main_table, list):
+def update_job_values(main_table, list, list2):
     dpg.delete_item(main_table, children_only=True)
     dpg.add_table_column(label="Status", init_width_or_weight=80, parent=main_table)
     dpg.add_table_column(label=list[0][0], init_width_or_weight=50, parent=main_table)
@@ -43,7 +48,7 @@ def update_job_values(main_table, list):
     dpg.add_table_column(label=list[0][2], init_width_or_weight=50, parent=main_table)
     dpg.add_table_column(label=list[0][3], init_width_or_weight=50, parent=main_table)
     dpg.add_table_column(label=list[0][4], init_width_or_weight=50, parent=main_table)
-    dpg.add_table_column(label=list[0][5], init_width_or_weight=50, parent=main_table)
+    dpg.add_table_column(label=list[0][5], init_width_or_weight=225, parent=main_table)
     dpg.add_table_column(label=list[0][6], init_width_or_weight=50, parent=main_table)
     dpg.add_table_column(label=list[0][7], init_width_or_weight=160, parent=main_table)
 
@@ -61,12 +66,14 @@ def update_job_values(main_table, list):
                     elif state == "PD":
                         theme = teal_button_theme
                     else:
-                        datetime.datetime.strptime(exec_time, "%M:%S")
+
+                        datetime.datetime.strptime(exec_time, "%H:%M:%S")
                         theme = green_button_theme
                         status = "RUNNING"
 
                 except ValueError:
-                    theme = teal_button_theme
+                    status = "RUNNING"
+                    theme = green_button_theme
 
                 if j == 0:
                     cbtn = dpg.add_button(
@@ -77,6 +84,18 @@ def update_job_values(main_table, list):
                         user_data=f"{list[i][j]}",
                     )
                     dpg.bind_item_theme(cbtn, theme=theme)
+                elif j == -1:
+                    if status == "AWAIT":
+                        now = datetime.datetime.now()
+                        try:
+                            time_start = datetime.datetime.fromisoformat(list2[i][j - 1])
+                            waittime = time_start - now
+                            dpg.add_text(f"Expected in {waittime.seconds}s ({int(waittime.seconds/ 60)} min)", tag=f"{j + i * len(list[i])}")
+                        except ValueError:
+                            dpg.add_text(f"Expected in N/A {len(list[i])} min)",
+                                         tag=f"{j + i * len(list[i])}")
+                    else:
+                        dpg.add_text(f"{list[i][j - 1]}", tag=f"{j + i * len(list[i])}")
                 else:
                     dpg.add_text(f"{list[i][j - 1]}", tag=f"{j + i * len(list[i])}")
 """
@@ -91,10 +110,16 @@ def local_table_callback(source, appdata, user_data):
         ["bash", "shell/run_job.sh", "run", f"remote/{user_data}", USER]
     )
 
+def job_editor_callback(source, appdata, user_data):
+    path = user_data
+    dpg.bind_item_theme(source, theme=downlink_theme)
+    dpg.configure_item(source, label="ON")
+    job = batchjob()
+
 def create_local_table():
     height = 200
     with dpg.window(label="B", no_title_bar=True, no_resize=True, no_move=True,
-                    no_scrollbar=True, width=800, height=height, pos=(500, 400)):
+                    no_scrollbar=True, width=800, height=height, pos=(500, 500)):
         second_table = dpg.add_table(
              tag="second_table", header_row=True,
              policy=dpg.mvTable_SizingFixedFit,
@@ -111,19 +136,42 @@ def create_local_table():
         )
     return second_table
 
+def request_modified_callback(source, appdata, user_data):
+    print(user_data)
+    job = JobCreator(user_data)
+    job.dropdown_callback("CPU", "CPU")
+
 def update_local_table_values(second_table, list):
     dpg.delete_item(second_table, children_only=True)
     dpg.add_table_column(label="Job", init_width_or_weight=80, parent=second_table)
     dpg.add_table_column(label="Status", init_width_or_weight=80, parent=second_table)
+    dpg.add_table_column(label="Edit", init_width_or_weight=80, parent=second_table)
 
     for i in range(0, len(list)):
         with dpg.table_row(parent=second_table):
             dpg.add_text(list[i])
-            cbtn3 = dpg.add_button(
-                label="READY",
+            if os.path.isfile(f"remote/{list[i]}/request.sh"):
+                cbtn3 = dpg.add_button(
+                    label="READY",
+                    width=80,
+                    height=30,
+                    callback=local_table_callback,
+                    user_data=f"{list[i]}"
+                )
+                dpg.bind_item_theme(cbtn3, theme=uplink_theme)
+            else:
+                cbtn3 = dpg.add_button(
+                    label="NO CNF",
+                    width=80,
+                    height=30,
+                    callback=local_table_callback,
+                    user_data=f"{list[i]}"
+                )
+                dpg.bind_item_theme(cbtn3, theme=downlink_theme)
+            cbtn4 = dpg.add_button(
+                label="Configure",
                 width=80,
                 height=30,
-                callback=local_table_callback,
+                callback=request_modified_callback,
                 user_data=f"{list[i]}"
             )
-            dpg.bind_item_theme(cbtn3, theme=uplink_theme)

@@ -119,7 +119,7 @@ def console_open_handle_local(source, app_data, user_data):
 def job_creator_open_handle(source, app_data, user_data):
     jcreate.create_window()
 
-def console_window(table):
+def console_window(table, status):
     # --- Optional: local button themes ---
     with dpg.theme(tag="blue_button_theme"):
         with dpg.theme_component(dpg.mvAll):
@@ -145,7 +145,6 @@ def console_window(table):
             dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 8, category=dpg.mvThemeCat_Core)
             dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 6, 6, category=dpg.mvThemeCat_Core)
 
-    # --- Main Window Layout ---
     with dpg.window(label="SyncTime",
                     no_title_bar=True,
                     no_resize=True,
@@ -155,6 +154,17 @@ def console_window(table):
                     height=250,
                     pos=(10, 500),
                     tag="console_window"):
+        if status:
+            cbtn3 = dpg.add_button(label="Connected",
+                                   width=-1, height=35,
+                                   callback=None, user_data=table)
+            dpg.bind_item_theme(cbtn3, theme="green_button_theme")
+        else:
+            cbtn3 = dpg.add_button(label="Not Connected",
+                                   width=-1, height=35,
+                                   callback=None, user_data=table)
+            dpg.bind_item_theme(cbtn3, theme="red_button_theme_local")
+
         dpg.add_spacer(height=6)
         dpg.add_text("Console Control", bullet=False)
         dpg.add_separator()
@@ -172,14 +182,7 @@ def console_window(table):
                                    callback=console_open_handle_local)
             dpg.bind_item_theme(cbtn2, theme="red_button_theme_local")
 
-            cbtn3 = dpg.add_button(label="Create New Job",
-                                   width=-1, height=35,
-                                   callback=job_creator_open_handle, user_data=table)
-            dpg.bind_item_theme(cbtn3, theme="green_button_theme")
-
         dpg.add_spacer(height=6)
         dpg.add_separator()
-        dpg.add_spacer(height=4)
-        dpg.add_text("Status: Idle", color=(180, 180, 180), tag="console_status")
 
     return cbtn, cbtn2, cbtn3

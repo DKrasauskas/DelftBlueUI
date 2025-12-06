@@ -79,6 +79,7 @@ def dropdown_callback(sender, app_data):
 def create_window():
     dropdown_callback("CPU", "CPU")
 
+
 # create_viewport(title="Dropdown New Window Example", width=400, height=200)
 # setup_dearpygui()
 # show_viewport()

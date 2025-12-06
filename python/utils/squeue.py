@@ -9,12 +9,13 @@ from user import *
 def get_queue():
 
         result = subprocess.run(
-            ["bash", "shell/check_job_status.sh", "check", USER],
+            ["bash", "shell/check_job_status.sh", "check2", USER],
             capture_output=True,
             text=True,
-            check=True
         )
-        return 1, [x.split() for x in result.stdout.split("\n") if len(x) != 0]
+        if result.returncode != 0:
+            return 0, None, None
+        return 1, [x.split() for x in result.stdout.split("@")[0].split("\n") if len(x) != 0], [x.split() for x in result.stdout.split("@")[1].split("\n") if len(x) != 0]
 
 
 class AsyncQueue:
@@ -27,6 +28,7 @@ class AsyncQueue:
         self.fetch_rule = func
         self.args = args
         self._data = None
+        self._data2 = None
         self.flag = 0
 
     def start(self):
@@ -44,17 +46,27 @@ class AsyncQueue:
                     [*self.args],
                     capture_output=True,
                     text=True,
-                    check=True
                 )
-                parsed_result =  [x.split() for x in result.stdout.split("\n") if len(x) != 0]
+                if result.returncode != 0:
+                    with self._data_lock:
+                        self._data = None
+                        self._data2 = None
+                        self.flag = True
+                    return
+                if len(result.stdout) < 1:
+                    break
+                parsed_result1 =  [x.split() for x in result.stdout.split("@")[0].split("\n") if len(x) != 0]
+                parsed_result2 =  [x.split() for x in result.stdout.split("@")[1].split("\n") if len(x) != 0]
                 with self._data_lock:
-                    self._data = parsed_result
+                    self._data = parsed_result1
+                    self._data2 = parsed_result2
                     self.flag = True
 
             except subprocess.CalledProcessError as e:
                 print("SSH job check failed:", e)
                 with self._data_lock:
                     self._data = None
+                    self._data2 = None
                     self.flag = True
             time.sleep(1)
 
@@ -62,7 +74,7 @@ class AsyncQueue:
         with self._data_lock:
             if self.flag:
                 self.flag = False
-                return self._data
-        return None
+                return self._data, self._data2
+        return None, None
 
 

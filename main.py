@@ -10,7 +10,7 @@ from user import *
 
 def get_jobfiles():
     subfolder_path = "remote"
-    return os.listdir(subfolder_path)#[f for f in os.listdir(subfolder_path) if os.path.isfolder(os.path.join(subfolder_path, f))]
+    return os.listdir(subfolder_path)
 
 def sync_func(self, path):
     print(f"Syncing folder: {path}")
@@ -31,16 +31,15 @@ main_table = create_job_table()
 #create local job table
 second_table = create_local_table()
 
-#create console window
-cbtn, cbtn1, cbtn2 = win.console_window(second_table)
-
 #create uplink/downlink table
 timer0, uplinkB, downlinkB, autosyncB = win.fetch_window()
+
 #asyncCP downlink / uplink for job squeue fetching from remote
-downlink = sq.AsyncQueue(func=None, args=("bash", "shell/check_job_status.sh", "check", USER), interval=2)
+downlink = sq.AsyncQueue(func=None, args=("bash", "shell/check_job_status.sh", "check2", USER), interval=2)
 downlink.start()
+sts, sq1, sq2 = sq.get_queue()
 
-
+cbtn, cbtn1, cbtn2 = win.console_window(second_table, sts)
 watcher = FolderWatcher(os.getcwd(), sync_func)
 
 #viewport and initialization times
@@ -49,17 +48,15 @@ elapsed = time.time()
 
 
 #get the initial list of jobs
-
 jobfiles = get_jobfiles()
 update_local_table_values(second_table, jobfiles)
-
 
 #main loop
 while dpg.is_dearpygui_running():
     dpg.render_dearpygui_frame()
-    list = downlink.fetch()
+    list, list2 = downlink.fetch()
     if list is not None:
-        update_job_values(main_table, list)
+        update_job_values(main_table, list, list2)
         print("fetched")
     dpg.set_value(timer0,f"Last fetch : {int(elapsed- win.FETCH_TIME)}s ago" )
     elapsed = time.time()
