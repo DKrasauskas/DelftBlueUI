@@ -68,6 +68,3 @@ You can terminate jobs by clicking on the Status icon:
 </p>
 
 
-
-
-# *this is still work in progress and not all features may work properly*
