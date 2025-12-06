@@ -2,11 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/NACA2/ELBM" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/NACA3/ELBM" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/cylinder1/ELBM" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/cylinder2/ELBM" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/wedge1/ELBM" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/remote/wedge2/ELBM" vcs="Git" />
   </component>
 </project>
