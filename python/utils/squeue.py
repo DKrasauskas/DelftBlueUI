@@ -18,6 +18,26 @@ def get_queue():
         return 1, [x.split() for x in result.stdout.split("@")[0].split("\n") if len(x) != 0], [x.split() for x in result.stdout.split("@")[1].split("\n") if len(x) != 0]
 
 
+def get_queue_win():
+    result = subprocess.run(
+        [
+            "powershell",
+            "-ExecutionPolicy", "Bypass",
+            "-File", "shell/windows/check_job_status.ps1",
+            "check2",
+            USER
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return 0, None, None
+    return 1, [x.split() for x in result.stdout.split("@")[0].split("\n") if len(x) != 0], [x.split() for x in
+                                                                                            result.stdout.split("@")[
+                                                                                                1].split("\n") if
+                                                                                            len(x) != 0]
+
+
 class AsyncQueue:
 
     def __init__(self, func, args, interval=60):

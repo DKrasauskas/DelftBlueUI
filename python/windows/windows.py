@@ -1,5 +1,7 @@
+import os
 import time
 import subprocess
+import platform
 from python.utils.styles import*
 from python.tables import jobConfigMenu as jcreate
 from user import *
@@ -107,14 +109,36 @@ def fetch_window():
 
     return timer0, up_btn, down_btn, autosync_button
 
+DETACHED_PROCESS = 0x00000008
 
 def console_open_handle(source, app_data, user_data):
-    subprocess.Popen(["konsole",  "-e", "/home/dominykas/PycharmProjects/PythonProject/DBinterface/shell/connect.sh", "A", USER])
+    if platform.system() == "Windows":
+        # Path to your PowerShell script
+        # Launch a new PowerShell window and run the script
+        ps_script = os.path.abspath("shell/windows/connect.ps1")
+        if not os.path.exists(ps_script):
+            raise FileNotFoundError(f"PowerShell script not found: {ps_script}")
+        try:
+            subprocess.Popen(
+                f'start "" "powershell" -NoExit -ExecutionPolicy Bypass -File "{ps_script}" A {USER}',
+                shell=True
+            )
+        except Exception as e:
+            print(f"Failed to launch PowerShell: {e}")
+
+    else:
+        ps_script = os.path.abspath("shell/windows/connect.ps1")
+        subprocess.Popen(["konsole",  "-e", ps_script, "A", USER])
+
 
 def console_open_handle_local(source, app_data, user_data):
-    subprocess.Popen(["konsole"])
-
-
+    if platform.system() == "Windows":
+        subprocess.Popen(
+            f'start "" "powershell" -NoExit',
+            shell=True
+        )
+    else:
+        subprocess.Popen(["konsole"])
 
 def job_creator_open_handle(source, app_data, user_data):
     jcreate.create_window()
