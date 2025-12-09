@@ -1,4 +1,5 @@
 
+pyinstaller --onefile main.py                                                                                              ✔
 
 # Paths
 DESKTOP_FILE=~/.local/share/applications/DelftBlue.desktop
