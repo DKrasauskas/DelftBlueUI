@@ -16,6 +16,10 @@ class Comm:
         # initialize dpg and logo
         dpg.create_context()
         dpg.create_viewport(title="DelftBlue", width=1500, height=800)
+        if platform.system() == "Windows":
+            dpg.set_viewport_large_icon("backends/img.ico")
+        else:
+            dpg.set_viewport_large_icon("backends/img.png")
         dpg.setup_dearpygui()
         self.width,  self.height,  self.channels,  self.data = dpg.load_image("backends/img.png")
         win.dblue_logo()
