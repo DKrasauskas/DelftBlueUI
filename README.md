@@ -12,6 +12,9 @@ This repo aims to ease access to the DelftBlue supercomputer by introducing an a
 To use, make sure your local machine has a ssh key corresponding to your account generated. You can generate it via:
 
     ssh-keygen -t ed25519 -C "username@login.delftblue.tudelft.nl"         
+You can view your SSH keys with (windows):
+    
+    cat $env:USERPROFILE\.ssh\id_ed25519.pub       
 Once the ssh key is generated, the usage is very simple. In user.py specify your username:
 
     USER = <your_username>    
