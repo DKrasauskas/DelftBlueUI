@@ -15,14 +15,14 @@ function Retrieve {
     if (-not (Test-Path $remoteDir)) {
         New-Item -ItemType Directory -Path $remoteDir | Out-Null
     }
-
-    rsync -avz --delete "$User@login.delftblue.tudelft.nl:~/remote/" $remoteDir
+    Write-Host "Current directory: $PWD"
+    & .\shell\windows\rsync\bin\rsync.exe -avz --delete -e ".\shell\windows\rsync\bin\ssh.exe" "$User@login.delftblue.tudelft.nl:~/remote/" $remoteDir
 }
 
 function Send {
     param($User)
-
-    rsync -avz --delete "remote" "$User@login.delftblue.tudelft.nl:~/"
+    Write-Host "Current directory: $PWD"
+    & .\shell\windows\rsync\bin\rsync.exe -avz --delete -e ".\shell\windows\rsync\bin\ssh.exe" "remote" "$User@login.delftblue.tudelft.nl:~/"
 }
 
 switch ($Action) {

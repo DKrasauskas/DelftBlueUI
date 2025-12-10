@@ -1,7 +1,7 @@
 import datetime
 import os
 import subprocess
-
+import platform
 from python.tables.jobConfigMenu import batchjob
 from python.utils.styles import *
 from python.utils import squeue as sq
@@ -16,7 +16,15 @@ def cancel_handle(source, app_data, user_data):
     print(f"cancelling {user_data}")
     dpg.configure_item(source, label="TERMINATED")
     dpg.bind_item_theme(source, theme=red_button_theme)
-    uplink = sq.AsyncQueue(func=None, args=("bash", "shell/cancel.sh", "terminate", user_data, USER))
+    if platform.system() == "Windows":
+        uplink = sq.AsyncQueue(func=None, args=( "powershell",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "shell/windows/cancel.sh",
+                "terminate",
+                user_data,
+                USER))
+    else:
+        uplink = sq.AsyncQueue(func=None, args=("bash", "shell/cancel.sh", "terminate", user_data, USER))
     uplink.start()
 
 
@@ -106,9 +114,20 @@ def local_table_callback(source, appdata, user_data):
     path = user_data
     dpg.bind_item_theme(source, theme=downlink_theme)
     dpg.configure_item(source, label="SUBMITTED")
-    subprocess.run(
-        ["bash", "shell/run_job.sh", "run", f"remote/{user_data}", USER]
-    )
+    if platform.system() == "Windows":
+        subprocess.run(
+            [
+            "powershell",
+            "-ExecutionPolicy", "Bypass",
+            "-File", "shell/windows/run_job.sh",
+            "run",
+            f"remote/{user_data}",
+            USER]
+        )
+    else:
+        subprocess.run(
+            ["bash", "shell/run_job.sh", "run", f"remote/{user_data}", USER]
+        )
 
 def job_editor_callback(source, appdata, user_data):
     path = user_data

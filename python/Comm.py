@@ -51,7 +51,7 @@ class Comm:
                 interval=2
             )
         self.downlink.start()
-        self.status, self.sq1, self.sq2 = sq.get_queue() #get slurm queue
+        self.status, self.sq1, self.sq2 = sq.get_queue_win() #get slurm queue
         self.cbtn,  self.cbtn1,  self.cbtn2 = win.console_window(self.second_table, self.status)
         self.watcher = FolderWatcher(os.getcwd(), self.func)
 
@@ -92,7 +92,7 @@ class Comm:
         ])
 
     def get_jobfiles(self):
-        subfolder_path = "remote"
+        subfolder_path = REMOTE_PATH
         return os.listdir(subfolder_path)
 
 

@@ -13,12 +13,37 @@ AUTOSYNC = False
 def send_directory(self, path):
     global FETCH_TIME
     FETCH_TIME = time.time()
-    subprocess.run(["bash", "shell/sync.sh", "send", USER])
+    if platform.system() == "Windows":
+        subprocess.run(
+            ["powershell",
+             "-ExecutionPolicy", "Bypass",
+             "-File", "shell/windows/sync.ps1",
+             "send",
+             USER,
+             ])
+    else:
+        subprocess.run(["bash", "shell/sync.sh", "send", USER])
 
 def receive_directory(self, path):
     global FETCH_TIME
     FETCH_TIME = time.time()
-    subprocess.run(["bash", "shell/sync.sh", "retrieve", USER])
+    if platform.system() == "Windows":
+        subprocess.run(
+            ["powershell",
+             "-ExecutionPolicy", "Bypass",
+             "-File", "shell/windows/sync.ps1",
+             "retrieve",
+             USER,
+             ]
+        )
+    else:
+        subprocess.run(
+            ["bash",
+             "shell/sync.sh",
+             "retrieve",
+             USER
+             ]
+        )
 
 def autosync(sender, app_data):
     global AUTOSYNC
