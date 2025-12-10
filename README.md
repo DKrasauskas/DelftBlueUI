@@ -17,13 +17,17 @@ To use, make sure your local machine has a ssh key corresponding to your account
 You can view your SSH keys with (windows):
     
     cat $env:USERPROFILE\.ssh\id_ed25519.pub       
+
+For Linux:
+
+    cat ~/.ssh/id_ed25519.pub
 Once the ssh key is generated, transfer it to DelftBlue:
 
     ssh username@login.delftblue.tudelft.nl
     cd ./.ssh
     nano authorized_keys
 And copy your local ssh key to this file.
-Once ssh keys are setup, configure your username and the folder where you want to store jobs in user.txt:
+Once ssh keys are set up, configure your username and the folder where you want to store jobs in user.txt:
 
      <your_username>    
      <path_to_your_folder>
@@ -37,7 +41,7 @@ Running the executable should provide you with a menu screen (outside TUDelft yo
 
 The lower table shows all the subfolders you have in the remote folder. This is the space for your jobs. How you choose to build them is up to you - whether it is a raw excutable, a cmake or Make file. Everything in remote folder will be synced with your login node on DelftBLue.
 
-Each job folder contains two bash scripts by default: 
+Each job folder should contain two bash scripts by default: 
 
 <p align="left">
 <img width="219" height="103" alt="image" src="https://github.com/user-attachments/assets/f2cfd349-76f4-4a09-9d14-b014e833e311" />
@@ -73,8 +77,14 @@ Once the job is finished, it is automatically removed from the compute job queue
 
 You can terminate jobs by clicking on the Status icon:
 
+
 <p align="left">
 <img width="679" height="65" alt="image" src="https://github.com/user-attachments/assets/151fbd44-0d00-4ed9-92ac-21b90bd49742" />
+
+  <h2 align="center">
+   Building From source
+</h1>
+If you want to build the file from source, run a builder (like pyinstaller) to create the executable, and make sure shell, backends folders are in the same place as the executbale. Alternatively, just run the python file. 
 </p>
 
 
