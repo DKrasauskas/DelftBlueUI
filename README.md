@@ -5,9 +5,11 @@
 <h1 align="center">
    DelftBlue GUI
 </h1>
+This repo aims to provide a level-of-abstraction for interfacing with DelftBlue. Create, dispatch, terminate and monitor your jobs in a single GUI. 
+<h2 align="center">
+   Installation
+</h1>
 
-
-This repo aims to ease access to the DelftBlue supercomputer by introducing an asynchronous uplink/downlink strategy to synchronize working directory on the local machine with remote, using only a few clicks of a button.
 
 To use, make sure your local machine has a ssh key corresponding to your account generated. You can generate it via:
 
@@ -15,15 +17,20 @@ To use, make sure your local machine has a ssh key corresponding to your account
 You can view your SSH keys with (windows):
     
     cat $env:USERPROFILE\.ssh\id_ed25519.pub       
-Once the ssh key is generated, the usage is very simple. In user.py specify your username:
+Once the ssh key is generated, transfer it to DelftBlue:
 
-    USER = <your_username>    
+    ssh username@login.delftblue.tudelft.nl
+    cd ./.ssh
+    nano authorized_keys
+And copy your local ssh key to this file.
+Once ssh keys are setup, configure your username and the folder where you want to store jobs in user.txt:
 
-Then run main.py. Alternatively, you can create a desktop application (with a neat little icon) by running install.sh:
+     <your_username>    
+     <path_to_your_folder>
 
-    chmod +x install.sh
-    ./install.sh
-Then running the executable should provide you with a menu screen (outside TUDelft you will need a VPN to access DelftBlue).
+Then run main. Alternatively, if you want to have a desktop shortcut, run the installer.
+
+Running the executable should provide you with a menu screen (outside TUDelft you will need a VPN to access DelftBlue).
 <p align="center">
  <img width="1497" height="828" alt="image" src="https://github.com/user-attachments/assets/1779695b-afa4-4a34-8bff-987f24760b52" />
 </p>
