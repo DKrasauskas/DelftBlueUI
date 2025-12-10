@@ -4,13 +4,14 @@ param(
     $Action,
 
     [Parameter(Mandatory=$true)]
-    $User
+    $User,
+    [Parameter(Mandatory=$true)]
+    $location
 )
 
 function Retrieve {
-    param($User)
-
-    $remoteDir = "remote"
+    param($User, $location)
+    $remoteDir = "$location"
 
     if (-not (Test-Path $remoteDir)) {
         New-Item -ItemType Directory -Path $remoteDir | Out-Null
@@ -20,12 +21,12 @@ function Retrieve {
 }
 
 function Send {
-    param($User)
+    param($User, $location)
     Write-Host "Current directory: $PWD"
-    & .\shell\windows\rsync\bin\rsync.exe -avz --delete -e ".\shell\windows\rsync\bin\ssh.exe" "remote" "$User@login.delftblue.tudelft.nl:~/"
+    & .\shell\windows\rsync\bin\rsync.exe -avz --delete -e ".\shell\windows\rsync\bin\ssh.exe" "$location" "$User@login.delftblue.tudelft.nl:~/"
 }
 
 switch ($Action) {
-    "retrieve" { Retrieve $User }
-    "send"     { Send $User }
+    "retrieve" { Retrieve $User $location }
+    "send"     { Send $User $location }
 }
