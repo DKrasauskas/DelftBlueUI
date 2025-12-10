@@ -10,7 +10,7 @@ FETCH_TIME = time.time()
 AUTOSYNC = False
 
 
-def send_directory(self, path):
+def send_directory(self, app_data, path):
     global FETCH_TIME
     FETCH_TIME = time.time()
     if platform.system() == "Windows":
@@ -20,11 +20,12 @@ def send_directory(self, path):
              "-File", "shell/windows/sync.ps1",
              "send",
              USER,
+             path
              ])
     else:
-        subprocess.run(["bash", "shell/sync.sh", "send", USER])
+        subprocess.run(["bash", "shell/sync.sh", "send", USER, path])
 
-def receive_directory(self, path):
+def receive_directory(self, app_data, path):
     global FETCH_TIME
     FETCH_TIME = time.time()
     if platform.system() == "Windows":
@@ -34,6 +35,7 @@ def receive_directory(self, path):
              "-File", "shell/windows/sync.ps1",
              "retrieve",
              USER,
+             path
              ]
         )
     else:
@@ -41,7 +43,8 @@ def receive_directory(self, path):
             ["bash",
              "shell/sync.sh",
              "retrieve",
-             USER
+             USER,
+             path
              ]
         )
 
@@ -110,9 +113,9 @@ def fetch_window():
         # Buttons laid out horizontally
         with dpg.group(horizontal=True):
             up_btn = dpg.add_button(label="Uplink", width=130, height=35,
-                                    callback=send_directory, user_data=0)
+                                    callback=send_directory, user_data=REMOTE_PATH)
             down_btn = dpg.add_button(label="Downlink", width=130, height=35,
-                                      callback=receive_directory, user_data=0)
+                                      callback=receive_directory, user_data=REMOTE_PATH)
 
         dpg.bind_item_theme(up_btn, theme="button_theme")
         dpg.bind_item_theme(down_btn, theme="button_theme")
@@ -152,7 +155,7 @@ def console_open_handle(source, app_data, user_data):
             print(f"Failed to launch PowerShell: {e}")
 
     else:
-        ps_script = os.path.abspath("shell/windows/connect.ps1")
+        ps_script = os.path.abspath("shell/connect.sh")
         subprocess.Popen(["konsole",  "-e", ps_script, "A", USER])
 
 

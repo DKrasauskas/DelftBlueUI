@@ -40,6 +40,7 @@ class Comm:
                     USER),
                 interval=2
             )
+            self.status, self.sq1, self.sq2 = sq.get_queue_win()
         else:
             self.func = self.sync_func
             self.downlink = sq.AsyncQueue(
@@ -50,8 +51,8 @@ class Comm:
                        USER),
                 interval=2
             )
+            self.status, self.sq1, self.sq2 = sq.get_queue()
         self.downlink.start()
-        self.status, self.sq1, self.sq2 = sq.get_queue_win() #get slurm queue
         self.cbtn,  self.cbtn1,  self.cbtn2 = win.console_window(self.second_table, self.status)
         self.watcher = FolderWatcher(os.getcwd(), self.func)
 
@@ -62,6 +63,7 @@ class Comm:
         # get the initial list of jobs
         self.jobfiles = self.get_jobfiles()
         update_local_table_values(self.second_table, self.jobfiles)
+
     def render(self):
         # main loop
         while dpg.is_dearpygui_running():
@@ -69,7 +71,6 @@ class Comm:
             list, list2 = self.downlink.fetch()
             if list is not None:
                 update_job_values(self.main_table, list, list2)
-                print("fetched")
             dpg.set_value(self.timer0, f"Last fetch : {int(self.elapsed - win.FETCH_TIME)}s ago")
             self.elapsed = time.time()
         # destroy context
